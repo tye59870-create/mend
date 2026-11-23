@@ -797,6 +797,8 @@ function run(args: string[]): { code: number; out: string[] } {
   } catch {
     if (file !== null) return { code: 2, out: ['error: no-patch'] };
   }
+  // A UTF-8 byte order mark is not patch content; drop it so format detection and JSON parsing see the real first line.
+  if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
   const lines = patchLines(text);
   const kind = format === null || format === 'auto' ? detect(lines) : format;
   if (kind === null) return { code: 2, out: ['error: format'] };
